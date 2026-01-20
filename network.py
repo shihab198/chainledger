@@ -204,11 +204,14 @@ class NetworkNode:
     
     def start(self):
         """Start the Flask server"""
+        # IMPORTANT: Use 0.0.0.0 to accept connections from other computers
+        bind_host = '0.0.0.0' if self.host == '127.0.0.1' else self.host
+        
         thread = threading.Thread(
             target=self.app.run,
-            kwargs={'host': self.host, 'port': self.port, 'debug': False}
+            kwargs={'host': bind_host, 'port': self.port, 'debug': False, 'use_reloader': False}
         )
         thread.daemon = True
         thread.start()
-        logger.info(f"Node started on {self.host}:{self.port}")
+        logger.info(f"Node started on {bind_host}:{self.port} (accessible from network)")
         return thread
